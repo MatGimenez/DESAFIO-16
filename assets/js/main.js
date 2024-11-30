@@ -1,3 +1,5 @@
+import { prepararGraficos } from "./grafica.js";
+
 async function todasLasMonedas(){
     try{
         const res = await fetch("https://mindicador.cl/api/");
@@ -5,31 +7,30 @@ async function todasLasMonedas(){
         GetValues(data);
     }
     catch(error){
-        alert (error.message);
+        const message = document.querySelector(".container")
+        message.innerHTML = `
+            <h3>Algo Salio Mal</h3>
+            <p>Error: ${error}</p>
+        `
     }
 }
 
 todasLasMonedas()
 
 async function todasLasFechas(divisa){
-    try{
-        const res = await fetch(`https://mindicador.cl/api/${divisa}`);
-        const fechas = await res.json();
-        console.log(fechas)
-        let fechasMod = []
-        let valoresMod = []
-        for (let i = 10; i > 0;i--){
-            fechasMod.push ({fecha: fechas.serie[i].fecha})
-            valoresMod.push ({valor: fechas.serie[i].valor})
-        }
+    const res = await fetch(`https://mindicador.cl/api/${divisa}`);
+    const fechas = await res.json();
+    console.log(fechas)
+    let fechasMod = []
+    let valoresMod = []
+    for (let i = 10; i > 0;i--){
+        fechasMod.push ({fecha: fechas.serie[i].fecha})
+        valoresMod.push ({valor: fechas.serie[i].valor})
+    }
         
     prepararGraficos(fechasMod.map((fecha) => fecha.fecha),valoresMod.map((valor) => valor.valor),divisa)
     console.log(fechasMod.map((fecha) => fecha.fecha))
     console.log(valoresMod.valor)
-    }
-    catch(error){
-        alert (error.message);
-    }
 }
 
 // TODO CARGA DE LAS ETIQUETAS HTML
@@ -113,7 +114,7 @@ const Multiplicar = (dato1, dato2, dato3, dato4)=>{
 }
 let myChart = null;
 
-function prepararGraficos(fechas,valores,divisa){
+/* function prepararGraficos(fechas,valores,divisa){
     const chartDOM = document.getElementById("myChart");
     if(myChart != null){
         myChart.destroy()
@@ -130,43 +131,4 @@ function prepararGraficos(fechas,valores,divisa){
             }
 
     });
-}
-
-
-/* function prepararConfiguracionParaLaGrafica(monedas) {
-    // Creamos las variables necesarias para el objeto de configuración
-    const tipoDeGrafica = "line";
-    const nombresDeLasMonedas = monedas.map((moneda) => moneda.fecha);
-    const titulo = "Monedas";
-    const colorDeLinea = "red";
-    const valores = monedas.map((moneda) => {
-    const valor = moneda.Valor.replace(",", ".");
-    return Number(valor);
-    });
-    // Creamos el objeto de configuración usando las variables anteriores
-    const config = {
-    type: tipoDeGrafica,
-    data: {
-    labels: nombresDeLasMonedas,
-    datasets: [
-    
-    {
-    label: titulo,
-    backgroundColor: colorDeLinea,
-    data: valores
-    }
-    ]
-    }
-    };
-    return config;
-}
-
-async function renderGrafica(divisas) {
-    const monedas = await divisas;
-    const config = prepararConfiguracionParaLaGrafica(monedas);
-    const chartDOM = document.getElementById("myChart");
-    new Chart(chartDOM, config);
-}
-
-renderGrafica();
- */
+} */

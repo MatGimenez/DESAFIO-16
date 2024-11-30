@@ -17,6 +17,7 @@ async function todasLasMonedas(){
 
 todasLasMonedas()
 
+
 async function todasLasFechas(divisa){
     const res = await fetch(`https://mindicador.cl/api/${divisa}`);
     const fechas = await res.json();
@@ -26,8 +27,7 @@ async function todasLasFechas(divisa){
     for (let i = 10; i > 0;i--){
         fechasMod.push ({fecha: fechas.serie[i].fecha})
         valoresMod.push ({valor: fechas.serie[i].valor})
-    }
-        
+    }  
     prepararGraficos(fechasMod.map((fecha) => fecha.fecha),valoresMod.map((valor) => valor.valor),divisa)
     console.log(fechasMod.map((fecha) => fecha.fecha))
     console.log(valoresMod.valor)
@@ -35,6 +35,8 @@ async function todasLasFechas(divisa){
 
 // TODO CARGA DE LAS ETIQUETAS HTML
 const divisa = document.querySelector(".divisa");
+const pesos = document.querySelector("#pesos");
+const resultadoFinal = document.querySelector("#result_final")
 const input = document.querySelector("input");
 const parrafo = document.querySelector(".parrafo")
 const selector = document.querySelector("#sel-divisa");
@@ -86,8 +88,13 @@ const renderDivisas = (dato1,dato2,dato3,dato4)=>{
         }else{
             result = ""
         }
-        divisa.innerHTML = result
-        });
+        if (result == ""){
+            pesos.innerHTML = `Precio: <span class="divisa">${result}</span>`
+        }else{
+            pesos.innerHTML = `Precio: <span class="divisa">${result}</span> pesos`
+        }
+        
+    });
 }
 
 //! Función de multiplicación de valor divisa y valor input
@@ -97,38 +104,24 @@ const Multiplicar = (dato1, dato2, dato3, dato4)=>{
     const valor_euro = dato3;
     const valor_bitcoin = dato4;
     let resultado = 0;
+    let valorDivisaparaTexto = ""
     if(selector.value == valor_uf.nombre){
-        resultado = input.value / valor_uf.valor 
+        resultado = input.value / valor_uf.valor
+        valorDivisaparaTexto = "UF"
     }else if(selector.value == valor_dolar.nombre){
-        resultado = input.value / valor_dolar.valor 
+        resultado = input.value / valor_dolar.valor
+        valorDivisaparaTexto = "dolares"
     }else if(selector.value == valor_euro.nombre){
-        resultado = input.value / valor_euro.valor 
+        resultado = input.value / valor_euro.valor
+        valorDivisaparaTexto = "euros"
     }else if(selector.value == valor_bitcoin.nombre){
         resultado = input.value / valor_bitcoin.valor
+        valorDivisaparaTexto = "bitcoins"
     }else{
     };
 
     //* Conversion a formato con separador de miles
-    parrafo.innerHTML = new Intl.NumberFormat().format(resultado);
+    resultadoFinal.innerHTML = `Resultado: <span class="parrafo">${new Intl.NumberFormat().format(resultado)}</span> ${valorDivisaparaTexto}`;
 
 }
-let myChart = null;
 
-/* function prepararGraficos(fechas,valores,divisa){
-    const chartDOM = document.getElementById("myChart");
-    if(myChart != null){
-        myChart.destroy()
-    }
-    myChart = new Chart(chartDOM, {
-            type: 'line',
-            data:{
-                labels: fechas,
-                datasets: [{
-                    label: divisa,
-                    data: valores,
-                    backgroundColor: '#FD0054',
-                }]
-            }
-
-    });
-} */

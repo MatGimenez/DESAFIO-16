@@ -1,3 +1,4 @@
+let myChart = null
 function prepararGraficos(fechas,valores,divisa){
     const chartDOM = document.getElementById("myChart");
     if(myChart != null){
